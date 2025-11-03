@@ -1,9 +1,9 @@
-// Replace these placeholders with your Firebase project config (from Firebase console)
-const firebaseConfig = {
+// Firebase configuration para PlumaZen
+export const firebaseConfig = {
   apiKey: "AIzaSyCPWTrTTnXItHBMA_aYWamJIxbylIAQtE4",
   authDomain: "plumazen-a8e9f.firebaseapp.com",
   projectId: "plumazen-a8e9f",
-  storageBucket: "plumazen-a8e9f.firebasestorage.app",
+  storageBucket: "plumazen-a8e9f.appspot.com",
   messagingSenderId: "402015679545",
-  appId: "1:402015679545:web:e5c695713e8aa0fffcc9e8"
+  appId: "1:402015679545:web:e5c695713e8aa0fffce9e8"
 };
