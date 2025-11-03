@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<!-- saved from url=(0038)https://plumazen.vercel.app/admin.html -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PlumaZen — Admin</title>
+  <link rel="stylesheet" href="./PlumaZen — Admin_files/style.css">
+</head>
+<body>
+  <header>
+    <h1>PlumaZen</h1>
+    <p>Panel de administración — <strong>Sr. AD</strong></p>
+    <div class="nav">
+      <a href="https://plumazen.vercel.app/index.html">Inicio</a>
+      <a href="https://plumazen.vercel.app/admin.html" class="active">Admin</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <div id="login-form" class="box" style="max-width:520px;margin:auto">
+      <h3>Iniciar sesión</h3>
+      <label for="email">Correo de admin</label>
+      <input id="email" type="email" placeholder="tu-correo-de-admin@plumazen.com" required="">
+      <label for="password">Contraseña</label>
+      <input id="password" type="password" placeholder="********" required="">
+      <div class="actions">
+        <button class="btn" id="login-btn">Entrar</button>
+      </div>
+      <p class="small">La autenticación usa Firebase Authentication (email/contraseña).</p>
+    </div>
+
+    <div id="admin-ui" style="display:none">
+      <div class="box">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap">
+          <div>Sesión: <strong id="admin-email"></strong></div>
+          <button class="btn" id="logout-btn" style="background:#b02a37">Cerrar sesión</button>
+        </div>
+      </div>
+
+      <div class="box" style="margin-top:1rem">
+        <h3>Agregar nuevo libro</h3>
+        <form id="new-book-form">
+          <label>Título</label>
+          <input name="title" required="">
+          <label>Descripción / Sinopsis</label>
+          <textarea name="description" rows="4" required=""></textarea>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem">
+            <div>
+              <label>Precio</label>
+              <input name="price" type="number" min="0" step="0.01" placeholder="9.99">
+            </div>
+            <div>
+              <label>Moneda</label>
+              <select name="currency">
+                <option value="USD">USD</option>
+                <option value="ARS">ARS</option>
+              </select>
+            </div>
+          </div>
+          <label>Link PayPal (PayPal.me o botón)</label>
+          <input name="paypal" placeholder="https://www.paypal.com/paypalme/TUUSUARIO">
+          <label>Portada (URL de imagen)</label>
+          <input name="cover" placeholder="https://.../portada.jpg">
+          <label>Pista de protección (opcional)</label>
+          <input name="password_hint" placeholder="Ej: Te envío la clave tras validar tu pago">
+          <div class="actions">
+            <button class="btn" type="submit">Publicar libro</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="box" style="margin-top:1rem">
+        <h3>Libros publicados</h3>
+        <div id="admin-book-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>© 2025 PlumaZen</footer>
+
+  <script type="module">
+    import { initAuthUI, addBook } from './js/app.js';
+
+    initAuthUI();
+
+    const form = document.getElementById('new-book-form');
+    form?.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const fd = new FormData(form);
+      const data = Object.fromEntries(fd.entries());
+      if(data.price) data.price = parseFloat(data.price);
+      await addBook(data);
+      alert('Libro publicado ✅');
+      form.reset();
+      // reload list
+      const {{ loadAdminBooks }} = await import('./js/app.js');
+      loadAdminBooks();
+    });
+  </script>
+
+
+</body></html>
