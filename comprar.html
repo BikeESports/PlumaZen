@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PlumaZen — Verificar compra</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>PlumaZen</h1>
+    <p>Verificación de compra y envío de comprobante</p>
+    <div class="nav">
+      <a href="index.html">Inicio</a>
+      <a href="admin.html">Admin</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="box" style="max-width:720px;margin:auto">
+      <h3>Completá tus datos</h3>
+      <form id="verify-form" action="https://formsubmit.co/agustindentella68@gmail.com" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_subject" value="Nuevo comprobante — PlumaZen">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" id="bookIdField" name="book_id" value="">
+        <label>Libro</label>
+        <input id="bookTitle" name="book_title" readonly placeholder="Cargando…">
+
+        <label>Nombre completo</label>
+        <input name="nombre" required>
+
+        <label>Correo electrónico</label>
+        <input type="email" name="email" required>
+
+        <label>Método de pago</label>
+        <select name="metodo" required>
+          <option value="PayPal (USD)">PayPal (USD)</option>
+          <option value="Transferencia (ARS)">Transferencia (ARS)</option>
+        </select>
+
+        <label>Adjuntar comprobante (imagen o PDF)</label>
+        <input type="file" name="comprobante" accept=".jpg,.jpeg,.png,.pdf" required>
+
+        <label>Mensaje (opcional)</label>
+        <textarea name="mensaje" rows="3" placeholder="Escribí cualquier detalle extra…"></textarea>
+
+        <div class="actions">
+          <button class="btn" type="submit">Enviar por Email</button>
+          <a id="waBtn" class="btn" target="_blank">Enviar por WhatsApp</a>
+        </div>
+        <p class="small">Tras verificar tu pago, recibirás el libro protegido (contraseña única o enlace de descarga seguro).</p>
+      </form>
+
+      <hr>
+      <div class="small">
+        ¿Transferencia en ARS? Enviá a este alias y titular, y adjuntá el comprobante:<br>
+        Alias: <strong>agustin.dentella</strong> — Titular: <strong>Agustin Dentella</strong>
+      </div>
+    </div>
+  </div>
+
+  <footer>© 2025 PlumaZen</footer>
+
+  <script type="module">
+    import {{ db }} from './js/app.js';
+    import {{ getDoc, doc }} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+    import {{ waLink }} from './js/app.js';
+
+    const params = new URLSearchParams(location.search);
+    const id = params.get('book');
+    const bookIdField = document.getElementById('bookIdField');
+    const bookTitleInput = document.getElementById('bookTitle');
+    const waBtn = document.getElementById('waBtn');
+
+    async function loadBook(){{
+      if(!id) return;
+      try {{
+        const snap = await getDoc(doc(db,'books',id));
+        if(snap.exists()) {{
+          const b = snap.data();
+          bookIdField.value = id;
+          bookTitleInput.value = b.title || 'Libro';
+          const msg = `Comprobante de compra — Libro: ${{b.title||'Libro'}}%0A`+
+                      `Nombre: (completar)%0A`+
+                      `Correo: (completar)%0A`+
+                      `Método: (PayPal/Transferencia)%0A`+
+                      `Adjunto: (enviar archivo aquí)`;
+          waBtn.href = waLink("592352537091", msg);
+          waBtn.textContent = "Enviar por WhatsApp";
+        }} else {{
+          bookTitleInput.value = 'Libro no encontrado';
+        }}
+      }}catch(e){{
+        bookTitleInput.value = 'Error cargando libro';
+        console.error(e);
+      }}
+    }}
+    loadBook();
+  </script>
+</body>
+</html>
